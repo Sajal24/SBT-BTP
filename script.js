@@ -7,7 +7,7 @@ const NFTStorageToken = process.env.NFT_STORAGE_TOKEN;
 const client = new NFTStorage({ token: NFTStorageToken });
 
 // ETHERS.JS Setup
-const apiKey = process.env.ALCHEMY_API_KEY;
+// const apiKey = process.env.ALCHEMY_API_KEY;
 
 // Interaction part1 - uplaod student details to NFT.storage
 let sName;
@@ -18,7 +18,6 @@ let sDob;
 let sPhoto;
 let sObject;
 let cid;
-let data;
 let metadataURL;
 let metadataContents;
 let metadataProperties;
@@ -29,6 +28,8 @@ const input = document.getElementById("input");
 const output = document.getElementById("output");
 const btn2 = document.getElementById("process_id");
 const connectBtn = document.getElementById("connect-Btn");
+
+connectBtn.onclick = connect();
 
 //connecting to metamask
 async function connect() {
@@ -41,10 +42,6 @@ async function connect() {
   }
 }
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
 input.addEventListener("change", () => {
   console.log("photo uploaded to client-side");
   const file = input.files;
@@ -53,11 +50,13 @@ input.addEventListener("change", () => {
 });
 
 btn2.addEventListener("click", async () => {
-  await uploadToJson();
+  await uploadData();
 });
 
-async function uploadToJson() {
-  console.log("btn2 activated.");
+async function uploadData() {
+  console.log(
+    "starting upload of data to nft.storage and then the address and cid to blockchain"
+  );
 
   sName = document.getElementById("name").value;
   console.log(sName);
@@ -86,7 +85,6 @@ async function uploadToJson() {
   });
 
   console.log("metadata:\n", metadata);
-  data = metadata;
   cid = metadata.ipnft;
   console.log("cid: ", cid);
   console.log("IPFS URL for the metadata:\n", metadata.url);
@@ -98,29 +96,32 @@ async function uploadToJson() {
   console.log("metadata.json properties:\n", metadata.data.properties);
   metadataProperties = metadata.data.properties;
 
-  // console.log("metadata.json with IPFS gateway URLs:\n", metadata.embed());
-  metadataGatewayURLs = metadata.embed();
+  //now we have the cid, we can upload it to the blockchain
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-  // console.log("restart");
-  // console.log(data);
-  // console.log(metadataURL);
-  // console.log(metadataContents);
-  // console.log(metadataProperties);
-  // console.log(metadataGatewayURLs);
-  // await uploadToBlockchain(cid);
-}
-// end uploadToJson()
+  //calling the function to add the student to the blockchain
+  const studentAdded = await contract.addStudent(sAccount, cid);
 
-async function uploadToBlockchain(_cid) {
-  const uniAddress = contract.address; // default getter method for public variables
-  console.log("The address of the university is:", uniAddress);
-
-  const addTx = await contract.addStudent(UNI_ACCOUNT, _cid);
-  await addTx.wait(1); // waiting for this transaction to be mined in the blockchain be waiting till 1 block confirmation(s)
+  //waiting a block for the transaction to be mined
+  await studentAdded.transaction.wait("1");
   console.log(
-    "addStudent() executed.\nAdded to blockchain with 1 block confirmation."
+    `Student added to blockchain with 1 block confirmation and transaction hash: ${studentAdded.transaction.hash}`
   );
 }
+// end uploadData()
+
+// async function uploadToBlockchain(_cid) {
+//   const uniAddress = contract.address; // default getter method for public variables
+//   console.log("The address of the university is:", uniAddress);
+
+//   const addTx = await contract.addStudent(UNI_ACCOUNT, _cid);
+//   await addTx.wait(1); // waiting for this transaction to be mined in the blockchain be waiting till 1 block confirmation(s)
+//   console.log(
+//     "addStudent() executed.\nAdded to blockchain with 1 block confirmation."
+//   );
+// }
 // // end uploadToBlockchain()
 
 function displayImage() {
