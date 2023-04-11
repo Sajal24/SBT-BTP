@@ -67,6 +67,19 @@ async function uploadData() {
 
   sObject = `{ sName : "${sName}", sAccount : "${sAccount}", sRollno : "${sRollno}", sAddress : "${sAddress}", sDob : "${sDob}", sPhoto" : ${sPhoto}" }`;
   console.log(sObject);
+
+  //now we have the cid, we can upload it to the blockchain
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+  //calling the function to check whether this account already exists on blockchain
+  const studentExists = await contract.checkStudentExists(sAccount);
+  if (studentExists) {
+    console.log("Student already exists on blockchain.");
+    return;
+  }
+
   console.log("Data will be uploaded to NFT.storage");
 
   // uploading to NFT.Storage
@@ -95,11 +108,6 @@ async function uploadData() {
 
   console.log("metadata.json properties:\n", metadata.data.properties);
   metadataProperties = metadata.data.properties;
-
-  //now we have the cid, we can upload it to the blockchain
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
   //calling the function to add the student to the blockchain
   const studentAdded = await contract.addStudent(sAccount, cid);
