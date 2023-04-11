@@ -29,7 +29,7 @@ const output = document.getElementById("output");
 const btn2 = document.getElementById("process_id");
 const connectBtn = document.getElementById("connect-Btn");
 
-connectBtn.onclick = connect();
+connectBtn.onclick = connect;
 
 //connecting to metamask
 async function connect() {
