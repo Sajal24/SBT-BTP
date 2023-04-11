@@ -1,4 +1,4 @@
-import { ethers } from "./node_modules/ethers";
+import { ethers } from "./ethers.umd.min.js";
 import { NFTStorage } from "./node_modules/nft.storage";
 import { contractABI, contractAddress } from "./constants.js";
 require("dotenv").config();
