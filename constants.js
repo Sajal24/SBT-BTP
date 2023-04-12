@@ -1,4 +1,5 @@
-export const contractAddress = "0xF6C6b7E999390827f4e9193f250EFadc4A07B165";
+// export const contractAddress = "0x884519b97b0377753507E7b02e4AaA959508490A"; sepolia
+export const contractAddress = "0x558E9295D8b87bf363094ef2fDA5Cb034920FF7c";
 export const contractABI = [
   {
     inputs: [],
@@ -79,6 +80,25 @@ export const contractABI = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_acc",
+        type: "address",
+      },
+    ],
+    name: "studentExists",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",

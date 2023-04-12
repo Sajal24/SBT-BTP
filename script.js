@@ -1,9 +1,8 @@
-import { ethers } from "./ethers.umd.min.js";
-import { NFTStorage } from "./node_modules/nft.storage";
+import { ethers } from "ethers";
+import { NFTStorage } from "nft.storage";
 import { contractABI, contractAddress } from "./constants.js";
-require("dotenv").config();
 
-const NFTStorageToken = process.env.NFT_STORAGE_TOKEN;
+const NFTStorageToken = import.meta.env.VITE_NFT_STORAGE_TOKEN;
 const client = new NFTStorage({ token: NFTStorageToken });
 
 // ETHERS.JS Setup
@@ -27,15 +26,19 @@ let metadataGatewayURLs;
 const input = document.getElementById("input");
 const output = document.getElementById("output");
 const btn2 = document.getElementById("process_id");
-const connectBtn = document.getElementById("connect-Btn");
+const connectBtn = document.getElementById("connect-btn");
 
-connectBtn.onclick = connect;
+connectBtn.addEventListener("click", async () => {
+  await connect();
+});
 
 //connecting to metamask
 async function connect() {
   if (window.ethereum) {
     await ethereum.request({ method: "eth_requestAccounts" });
     console.log("connected to metamask!");
+    console.log(window.ethereum);
+
     connectBtn.innerHTML = "Connected";
   } else {
     connectBtn.innerHTML = "Please download Metamask extension";
@@ -53,7 +56,7 @@ btn2.addEventListener("click", async () => {
   await uploadData();
 });
 
-async function uploadData() {
+const uploadData = async () => {
   console.log(
     "starting upload of data to nft.storage and then the address and cid to blockchain"
   );
@@ -68,16 +71,34 @@ async function uploadData() {
   sObject = `{ sName : "${sName}", sAccount : "${sAccount}", sRollno : "${sRollno}", sAddress : "${sAddress}", sDob : "${sDob}", sPhoto" : ${sPhoto}" }`;
   console.log(sObject);
 
+  console.log("check 1: data utha liya gaya hai");
+
   //now we have the cid, we can upload it to the blockchain
+  console.log(ethers.providers);
+
+  console.log("check 2: ethers zinda hai");
+
+  console.log(window.ethereum);
+
+  console.log("check 3: window.ethereum zinda hai");
+
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
+  console.log(provider);
+  const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
+  console.log(signer);
   const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  console.log(await contract.i_uniAddress());
+
+  console.log(contract);
+  console.log("check4: contract zinda hai");
 
   //calling the function to check whether this account already exists on blockchain
-  const studentExists = await contract.checkStudentExists(sAccount);
+  const studentExists = await contract.studentExists(sAccount);
   if (studentExists) {
     console.log("Student already exists on blockchain.");
     return;
+  } else {
+    console.log("check5: studentExists function zinda hai");
   }
 
   console.log("Data will be uploaded to NFT.storage");
@@ -100,37 +121,29 @@ async function uploadData() {
   console.log("metadata:\n", metadata);
   cid = metadata.ipnft;
   console.log("cid: ", cid);
-  console.log("IPFS URL for the metadata:\n", metadata.url);
-  metadataURL = metadata.url;
 
-  console.log("metadata.json contents:\n", metadata.data);
-  metadataContents = metadata.data;
+  console.log("check5: cid zinda hai yay");
 
-  console.log("metadata.json properties:\n", metadata.data.properties);
-  metadataProperties = metadata.data.properties;
+  // console.log("IPFS URL for the metadata:\n", metadata.url);
+  // metadataURL = metadata.url;
+
+  // console.log("metadata.json contents:\n", metadata.data);
+  // metadataContents = metadata.data;
+
+  // console.log("metadata.json properties:\n", metadata.data.properties);
+  // metadataProperties = metadata.data.properties;
 
   //calling the function to add the student to the blockchain
   const studentAdded = await contract.addStudent(sAccount, cid);
+
+  console.log("check6: studentAdded function zinda hai");
 
   //waiting a block for the transaction to be mined
   await studentAdded.transaction.wait("1");
   console.log(
     `Student added to blockchain with 1 block confirmation and transaction hash: ${studentAdded.transaction.hash}`
   );
-}
-// end uploadData()
-
-// async function uploadToBlockchain(_cid) {
-//   const uniAddress = contract.address; // default getter method for public variables
-//   console.log("The address of the university is:", uniAddress);
-
-//   const addTx = await contract.addStudent(UNI_ACCOUNT, _cid);
-//   await addTx.wait(1); // waiting for this transaction to be mined in the blockchain be waiting till 1 block confirmation(s)
-//   console.log(
-//     "addStudent() executed.\nAdded to blockchain with 1 block confirmation."
-//   );
-// }
-// // end uploadToBlockchain()
+};
 
 function displayImage() {
   console.log("displayImage() activated.");
