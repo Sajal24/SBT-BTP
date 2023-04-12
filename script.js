@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers } from "./ethers.esm.min.js";
 import { NFTStorage } from "nft.storage";
 import { contractABI, contractAddress } from "./constants.js";
 
@@ -139,9 +139,9 @@ const uploadData = async () => {
   console.log("check6: studentAdded function zinda hai");
 
   //waiting a block for the transaction to be mined
-  await studentAdded.transaction.wait("1");
+  const receipt = await studentAdded.wait("1");
   console.log(
-    `Student added to blockchain with 1 block confirmation and transaction hash: ${studentAdded.transaction.hash}`
+    `Student added to blockchain with 1 block confirmation and transaction hash: ${receipt.transactionHash}`
   );
 };
 
