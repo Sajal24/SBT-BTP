@@ -83,13 +83,13 @@ const uploadData = async () => {
   // console.log("check 3: window.ethereum is working");
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  console.log(provider);
+  // console.log(provider);
   const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
-  console.log(signer);
+  // console.log(signer);
   const contract = new ethers.Contract(contractAddress, contractABI, signer);
-  console.log(await contract.i_uniAddress());
+  // console.log(await contract.i_uniAddress());
 
-  console.log(contract);
+  // console.log(contract);
   console.log("check2: Contract instance created");
 
   //calling the function to check whether this account already exists on blockchain
