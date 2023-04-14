@@ -12,7 +12,7 @@ const client = new NFTStorage({ token: NFTStorageToken });
 let sName;
 let sAccount;
 let sRollno;
-let sAddress;
+let sBranch;
 let sDob;
 let sPhoto;
 let sObject;
@@ -58,17 +58,17 @@ btn2.addEventListener("click", async () => {
 
 const uploadData = async () => {
   console.log(
-    "starting upload of data to nft.storage and then the address and cid to blockchain"
+    "starting upload of data to nft.storage and then the branch and cid to blockchain"
   );
 
   sName = document.getElementById("name").value;
   console.log(sName);
   sAccount = document.getElementById("account").value;
   sRollno = document.getElementById("roll").value;
-  sAddress = document.getElementById("address").value;
+  sBranch = document.getElementById("branch").value;
   sDob = document.getElementById("date").value;
 
-  sObject = `{ sName : "${sName}", sAccount : "${sAccount}", sRollno : "${sRollno}", sAddress : "${sAddress}", sDob : "${sDob}", sPhoto" : ${sPhoto}" }`;
+  sObject = `{ sName : "${sName}", sAccount : "${sAccount}", sRollno : "${sRollno}", sBranch : "${sBranch}", sDob : "${sDob}", sPhoto" : ${sPhoto}" }`;
   console.log(sObject);
 
   console.log("check 1: Data is collected from the form");
@@ -114,9 +114,8 @@ const uploadData = async () => {
       sName: sName,
       sAccount: sAccount,
       sRollno: sRollno,
-      sAddress: sAddress,
+      sBranch: sBranch,
       sDob: sDob,
-      sPhoto: sPhoto,
     },
   });
 
