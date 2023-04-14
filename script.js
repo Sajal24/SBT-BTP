@@ -71,16 +71,16 @@ const uploadData = async () => {
   sObject = `{ sName : "${sName}", sAccount : "${sAccount}", sRollno : "${sRollno}", sAddress : "${sAddress}", sDob : "${sDob}", sPhoto" : ${sPhoto}" }`;
   console.log(sObject);
 
-  console.log("check 1: data utha liya gaya hai");
+  console.log("check 1: Data is collected from the form");
 
   //now we have the cid, we can upload it to the blockchain
-  console.log(ethers.providers);
+  // console.log(ethers.providers);
 
-  console.log("check 2: ethers zinda hai");
+  // console.log("check 2: Ethers library is working");
 
-  console.log(window.ethereum);
+  // console.log(window.ethereum);
 
-  console.log("check 3: window.ethereum zinda hai");
+  // console.log("check 3: window.ethereum is working");
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   console.log(provider);
@@ -90,7 +90,7 @@ const uploadData = async () => {
   console.log(await contract.i_uniAddress());
 
   console.log(contract);
-  console.log("check4: contract zinda hai");
+  console.log("check2: Contract instance created");
 
   //calling the function to check whether this account already exists on blockchain
   const studentExists = await contract.studentExists(sAccount);
@@ -98,10 +98,12 @@ const uploadData = async () => {
     console.log("Student already exists on blockchain.");
     return;
   } else {
-    console.log("check5: studentExists function zinda hai");
+    console.log(
+      "check3: studentExists function working and student doesn't exist, so will be registered on blockchain now"
+    );
   }
 
-  console.log("Data will be uploaded to NFT.storage");
+  // console.log("Data will be uploaded to NFT.storage");
 
   // uploading to NFT.Storage
   const metadata = await client.store({
@@ -122,7 +124,9 @@ const uploadData = async () => {
   cid = metadata.ipnft;
   console.log("cid: ", cid);
 
-  console.log("check5: cid zinda hai yay");
+  console.log(
+    "check4: CID Check - data uploaded to NFT.storage, the decentralized way! :)"
+  );
 
   // console.log("IPFS URL for the metadata:\n", metadata.url);
   // metadataURL = metadata.url;
@@ -136,7 +140,7 @@ const uploadData = async () => {
   //calling the function to add the student to the blockchain
   const studentAdded = await contract.addStudent(sAccount, cid);
 
-  console.log("check6: studentAdded function zinda hai");
+  console.log("check5: Adding the student to the blockchain");
 
   //waiting a block for the transaction to be mined
   const receipt = await studentAdded.wait("1");
